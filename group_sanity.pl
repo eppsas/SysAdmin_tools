@@ -1,6 +1,13 @@
 #! /usr/bin/perl
 
 ####################
+## this code is yet another version of the "reconcile UIDs and GIDs" for migration from local
+## authentication to LDAP/AD integration for AIX environments
+## It has been only partially sanitized and made generic - it is still a work in progress
+
+
+
+####################
 ## pragmas
 ##########
 use Cwd;
