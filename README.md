@@ -23,4 +23,21 @@ If you see something that you want to improve on, please do so.
 To be honest the purpose for this repository is mostly for my own use, so I quit leaving useful code at home on the thumb
 drive when I need it at work...sigh
 
+All works in this GitHub repository are copywrited and copylefted:
+
 Alan
+
+Copywrite 2014 Alan S Epps
+
+ This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
