@@ -18,7 +18,7 @@ use strict;
 # global variables
 ##########
 my (@group_names,@group_GIDs,@users,@hosts) = undef;
-my (%groups_per_host,%groups_by_GID,%users_by_group,%u_groups) = undef;
+my (%groups_per_host,%hosts_per_group,%groups_by_GID,%users_by_group,%u_groups,%u_users) = undef;
 my $target = undef;
 ## list of groups to be excluded from the reporting later
 my %default_group_list = (
@@ -93,7 +93,7 @@ foreach my $filename(@dir_contents) {
 ## output section of the main program
 @hosts = sort(keys(%groups_per_host));
 print "####################\n";
-print "Hosts and groups on the host:\n";
+print "# Hosts and groups on the host:\n";
 foreach my $line(@hosts) {
 	if ($line !~ /\w/) {
 		next;
@@ -106,7 +106,7 @@ foreach my $line(@hosts) {
 
 @group_names = sort(keys(%users_by_group));
 print "####################\n";
-print "Groups and users per group:\n";
+print "# Groups and users per group:\n";
 foreach my $line(@group_names) {
 	my %uniques = undef;
 	if ($line !~ /\w/) {
@@ -126,7 +126,7 @@ foreach my $line(@group_names) {
 
 @group_GIDs = sort(keys(%groups_by_GID));
 print "####################\n";
-print "GIDs and groups per GID:\n";
+print "# GIDs and groups per GID:\n";
 foreach my $line(@group_GIDs) {
 	my %uniques = undef;
 	if ($line !~ /\w/) {
@@ -148,7 +148,7 @@ foreach my $line(@group_GIDs) {
 my @u_group_list = sort(keys(%u_groups));
 my $group_count = 0;
 print "####################\n";
-print "Unique groups:\n";
+print "# Unique groups:\n";
 foreach my $line(@u_group_list) {
 	chomp $line;
 	if ($line !~ /\w/) {
@@ -161,6 +161,28 @@ foreach my $line(@u_group_list) {
 }
 print "Total number of groups: $group_count\n";
 
+print "####################\n";
+print "# Hosts per group:\n";
+foreach my $line(@u_group_list) {
+	chomp $line;
+	if ($line !~ /\w/) {
+		next;
+	}
+	unless (exists $default_group_list{$line}) {
+		my @lhosts = @{$hosts_per_group{$line}};
+		print "$line: @lhosts\n";
+	}
+}
+
+
+my @u_user_list = sort(keys(%u_users));
+print "####################\n";
+print "# Unique users:\n";
+foreach my $uuser(@u_user_list) {
+	unless (exists $default_user_list{$uuser}) {
+		print "$uuser\n";
+	}
+}
 
 
 ####################
@@ -197,11 +219,13 @@ sub loader {
 			unless (exists $default_group_list{$groupname}) {
 				push (@{$groups_per_host{$host}},"$groupname,");
 				push (@{$groups_by_GID{$gid}},"$groupname,");
+				push (@{$hosts_per_group{$groupname}},"$host,");
 			}
 			my @temp = split /\,/, $users;
 			foreach my $usr(@temp) {
 				if ($usr =~ /\w/) {
 					$usr =~ s/\s+//g;
+					$u_users{$usr} = 1;
 					unless (exists $default_user_list{$usr}) {
 						push (@{$users_by_group{$groupname}},"$usr,");
 					}
@@ -212,20 +236,22 @@ sub loader {
 }
 
 
-Copywrite 2014 Alan S Epps
-
- This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+######################################################
+## Copywrite 2014 Alan S Epps
+## 
+##  This program is free software: you can redistribute it and/or modify
+##     it under the terms of the GNU General Public License as published by
+##     the Free Software Foundation, either version 3 of the License, or
+##     (at your option) any later version.
+## 
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     GNU General Public License for more details.
+## 
+##     You should have received a copy of the GNU General Public License
+##     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+######################################################
 
 
 
