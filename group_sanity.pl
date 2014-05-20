@@ -18,7 +18,7 @@ use strict;
 # global variables
 ##########
 my (@group_names,@group_GIDs,@users,@hosts) = undef;
-my (%groups_per_host,%hosts_per_group,%groups_by_GID,%users_by_group,%u_groups,%u_users) = undef;
+my (%groups_per_host,%hosts_per_group,%groups_by_GID,%users_by_group,%u_groups,%u_users,%groups_by_user,%hosts_per_user) = undef;
 my $target = undef;
 ## list of groups to be excluded from the reporting later
 my %default_group_list = (
@@ -184,6 +184,63 @@ foreach my $uuser(@u_user_list) {
 	}
 }
 
+my @users_list = sort(keys(%groups_by_user));
+print "####################\n";
+print "# Groups per user:\n";
+foreach my $line(@users_list) {
+	chomp $line;
+	if ($line !~ /\w/) {
+		next;
+	}
+	unless (exists $default_user_list{$line}) {
+		my %temp_grps = undef;
+		my @lgroups = @{$groups_by_user{$line}};
+		foreach my $t_line(@lgroups) {
+			if ($t_line !~ /\w/) {
+				next;
+			}
+			$temp_grps{$t_line} = 1;
+		}
+		my @unique_lgroups = sort(keys(%temp_grps));
+		print "$line: ";
+		foreach my $ulgroup(@unique_lgroups) {
+			if ($ulgroup !~ /\w/) {
+				next;
+			}
+			print "$ulgroup";
+		}
+		print "\n";
+	}
+}
+
+my @users_list = sort(keys(%hosts_per_user));
+print "####################\n";
+print "# Hosts per user:\n";
+foreach my $line(@users_list) {
+	chomp $line;
+	if ($line !~ /\w/) {
+		next;
+	}
+	unless (exists $default_user_list{$line}) {
+		my %temp_hosts = undef;
+		my @lhosts = @{$hosts_per_user{$line}};
+		foreach my $lline(@lhosts) {
+			if ($lline !~ /\w/) {
+				next;
+			}
+			$temp_hosts{$lline} = 1;
+		}
+		my @unique_lhosts = sort(keys(%temp_hosts));
+		print "$line: ";
+		foreach my $ulhost(@unique_lhosts) {
+			if ($ulhost !~ /\w/) {
+				next;
+			}
+			print "$ulhost";
+		}
+		print "\n";
+	}
+}
 
 ####################
 # subroutines
@@ -228,6 +285,8 @@ sub loader {
 					$u_users{$usr} = 1;
 					unless (exists $default_user_list{$usr}) {
 						push (@{$users_by_group{$groupname}},"$usr,");
+						push (@{$groups_by_user{$usr}},"$groupname,");
+						push (@{$hosts_per_user{$usr}},"$host,");
 					}
 				}
 			}
